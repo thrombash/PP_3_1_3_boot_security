@@ -1,8 +1,11 @@
 package ru.kata.spring.boot_security.demo.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.hibernate5.support.OpenSessionInViewFilter;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,13 +15,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import ru.kata.spring.boot_security.demo.entity.Role;
+import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.security.UserDetailsServiceImpl;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @EnableWebSecurity
 @EnableJpaRepositories(basePackages = "ru.kata.spring.boot_security.demo.repositories")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessUserHandler successUserHandler;
     private final UserDetailsServiceImpl userDetailsService;
+
 
     public SecurityConfig(SuccessUserHandler successUserHandler,
                              @Qualifier("userDetailsServiceImpl") UserDetailsServiceImpl userDetailsService) {
@@ -52,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -63,4 +73,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationFailureHandler authenticationFailureHandler() {
         return new SimpleUrlAuthenticationFailureHandler("/login?error");
     }
+
 }
